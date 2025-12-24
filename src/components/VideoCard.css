@@ -1,0 +1,237 @@
+.video-card {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  background-color: #000;
+  overflow: hidden;
+}
+
+.video-player {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+.video-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+}
+
+.play-button {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.8;
+  animation: fadeIn 0.2s ease;
+}
+
+.double-tap-heart {
+  animation: heartPop 1s ease forwards;
+}
+
+@keyframes heartPop {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+.video-progress-bar {
+  position: absolute;
+  bottom: 70px;
+  left: 0;
+  right: 90px;
+  height: 2px;
+  background-color: rgba(255, 255, 255, 0.2);
+  z-index: 15;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--gradient-primary);
+  transition: width 0.1s linear;
+}
+
+.video-info {
+  position: absolute;
+  bottom: 80px;
+  left: 16px;
+  right: 100px;
+  z-index: 10;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.user-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid var(--primary);
+  object-fit: cover;
+}
+
+.user-details {
+  flex: 1;
+}
+
+.username-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.display-name {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.verified-badge {
+  color: var(--primary);
+  fill: var(--primary);
+}
+
+.username {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.follow-button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 14px;
+  background: var(--gradient-primary);
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.follow-button:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-glow);
+}
+
+.video-description {
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 10px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.video-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.tag {
+  font-size: 13px;
+  color: var(--primary);
+  cursor: pointer;
+}
+
+.tag:hover {
+  text-decoration: underline;
+}
+
+.audio-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.audio-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.video-actions {
+  position: absolute;
+  right: 12px;
+  bottom: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  z-index: 10;
+}
+
+.action-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.action-icon {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  transition: transform 0.2s ease;
+}
+
+.action-button:hover .action-icon {
+  transform: scale(1.15);
+}
+
+.action-icon.liked {
+  animation: pulse 0.3s ease;
+}
+
+.action-icon.saved {
+  animation: pulse 0.3s ease;
+}
+
+.action-count {
+  font-size: 12px;
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.mute-button {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.mute-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
