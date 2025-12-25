@@ -17,31 +17,77 @@ function VideoFeed({
 }) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isScrolling, setIsScrolling] = useState(false)
+  const [touchDelta, setTouchDelta] = useState(0)
+  const [isRefreshing, setIsRefreshing] = useState(false)
   const containerRef = useRef(null)
   const startY = useRef(0)
+  const startX = useRef(0)
   const currentY = useRef(0)
+  const startTime = useRef(0)
+  const isVerticalSwipe = useRef(null)
 
   const handleTouchStart = useCallback((e) => {
     startY.current = e.touches[0].clientY
+    startX.current = e.touches[0].clientX
     currentY.current = e.touches[0].clientY
+    startTime.current = Date.now()
+    isVerticalSwipe.current = null
+    setTouchDelta(0)
   }, [])
 
   const handleTouchMove = useCallback((e) => {
-    currentY.current = e.touches[0].clientY
-  }, [])
+    const deltaX = Math.abs(e.touches[0].clientX - startX.current)
+    const deltaY = e.touches[0].clientY - startY.current
+
+    // Determine swipe direction on first significant movement
+    if (isVerticalSwipe.current === null && (Math.abs(deltaY) > 10 || deltaX > 10)) {
+      isVerticalSwipe.current = Math.abs(deltaY) > deltaX
+    }
+
+    // Only handle vertical swipes
+    if (isVerticalSwipe.current) {
+      currentY.current = e.touches[0].clientY
+
+      // Add resistance at boundaries
+      let delta = deltaY
+      if ((currentIndex === 0 && deltaY > 0) ||
+          (currentIndex === videos.length - 1 && deltaY < 0)) {
+        delta = deltaY * 0.3 // Rubber band effect
+
+        // Pull to refresh at top
+        if (currentIndex === 0 && deltaY > 50) {
+          setIsRefreshing(true)
+        }
+      }
+
+      setTouchDelta(delta)
+    }
+  }, [currentIndex, videos.length])
 
   const handleTouchEnd = useCallback(() => {
     const diff = startY.current - currentY.current
-    const threshold = 50
+    const timeDiff = Date.now() - startTime.current
+    const velocity = Math.abs(diff) / timeDiff
 
-    if (Math.abs(diff) > threshold) {
+    // Lower threshold for fast swipes (velocity-based)
+    const threshold = velocity > 0.5 ? 30 : 80
+
+    if (isVerticalSwipe.current && Math.abs(diff) > threshold) {
       if (diff > 0 && currentIndex < videos.length - 1) {
         setCurrentIndex(prev => prev + 1)
       } else if (diff < 0 && currentIndex > 0) {
         setCurrentIndex(prev => prev - 1)
       }
     }
-  }, [currentIndex, videos.length])
+
+    // Handle pull to refresh
+    if (isRefreshing) {
+      setTimeout(() => setIsRefreshing(false), 1000)
+    }
+
+    setTouchDelta(0)
+    isVerticalSwipe.current = null
+  }, [currentIndex, videos.length, isRefreshing])
 
   const handleWheel = useCallback((e) => {
     if (isScrolling) return
@@ -75,6 +121,13 @@ function VideoFeed({
     setCurrentIndex(0)
   }, [activeCategory])
 
+  // Calculate transform with touch delta for real-time feedback
+  const getTransform = () => {
+    const baseTransform = currentIndex * 100
+    const deltaPercent = (touchDelta / window.innerHeight) * 100
+    return `translateY(-${baseTransform - deltaPercent}%)`
+  }
+
   return (
     <div className="video-feed">
       <CategoryBar
@@ -82,6 +135,13 @@ function VideoFeed({
         activeCategory={activeCategory}
         onCategoryChange={onCategoryChange}
       />
+
+      {isRefreshing && (
+        <div className="refresh-indicator">
+          <div className="refresh-spinner" />
+          <span>Refreshing...</span>
+        </div>
+      )}
 
       <div
         ref={containerRef}
@@ -92,8 +152,8 @@ function VideoFeed({
         onWheel={handleWheel}
       >
         <div
-          className="video-slider"
-          style={{ transform: `translateY(-${currentIndex * 100}%)` }}
+          className={`video-slider ${touchDelta === 0 ? 'smooth' : ''}`}
+          style={{ transform: getTransform() }}
         >
           {videos.map((video, index) => (
             <VideoCard
