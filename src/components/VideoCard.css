@@ -4,12 +4,17 @@
   position: relative;
   background-color: #000;
   overflow: hidden;
+  /* Prevent any text selection during gestures */
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .video-player {
   height: 100%;
   width: 100%;
   object-fit: cover;
+  /* Prevent default video controls on mobile */
+  -webkit-playsinline: true;
 }
 
 .video-overlay {
@@ -22,6 +27,8 @@
   align-items: center;
   justify-content: center;
   z-index: 5;
+  /* Allow touches to pass through to video when not showing controls */
+  pointer-events: auto;
 }
 
 .play-button {
@@ -34,23 +41,26 @@
   justify-content: center;
   opacity: 0.8;
   animation: fadeIn 0.2s ease;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 .double-tap-heart {
   animation: heartPop 1s ease forwards;
+  pointer-events: none;
 }
 
 @keyframes heartPop {
   0% {
-    transform: scale(0);
+    transform: scale3d(0, 0, 1);
     opacity: 1;
   }
   50% {
-    transform: scale(1.2);
+    transform: scale3d(1.2, 1.2, 1);
     opacity: 1;
   }
   100% {
-    transform: scale(1);
+    transform: scale3d(1, 1, 1);
     opacity: 0;
   }
 }
@@ -60,15 +70,18 @@
   bottom: 70px;
   left: 0;
   right: 90px;
-  height: 2px;
+  height: 3px;
   background-color: rgba(255, 255, 255, 0.2);
   z-index: 15;
+  border-radius: 2px;
 }
 
 .progress-fill {
   height: 100%;
   background: var(--gradient-primary);
   transition: width 0.1s linear;
+  border-radius: 2px;
+  will-change: width;
 }
 
 .video-info {
@@ -77,6 +90,8 @@
   left: 16px;
   right: 100px;
   z-index: 10;
+  /* Safe area padding on left */
+  padding-left: env(safe-area-inset-left, 0);
 }
 
 .user-info {
@@ -87,15 +102,17 @@
 }
 
 .user-avatar {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   border: 2px solid var(--primary);
   object-fit: cover;
+  flex-shrink: 0;
 }
 
 .user-details {
   flex: 1;
+  min-width: 0;
 }
 
 .username-row {
@@ -107,11 +124,15 @@
 .display-name {
   font-weight: 600;
   font-size: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .verified-badge {
   color: var(--primary);
   fill: var(--primary);
+  flex-shrink: 0;
 }
 
 .username {
@@ -122,18 +143,22 @@
 .follow-button {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 4px;
-  padding: 6px 14px;
+  padding: 10px 18px;
   background: var(--gradient-primary);
-  border-radius: 20px;
-  font-size: 13px;
+  border-radius: 22px;
+  font-size: 14px;
   font-weight: 600;
   color: white;
-  transition: all 0.3s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  /* Ensure touch target */
+  min-height: 44px;
+  flex-shrink: 0;
 }
 
-.follow-button:hover {
-  transform: scale(1.05);
+.follow-button:active {
+  transform: scale(0.95);
   box-shadow: var(--shadow-glow);
 }
 
@@ -145,6 +170,7 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .video-tags {
@@ -158,10 +184,12 @@
   font-size: 13px;
   color: var(--primary);
   cursor: pointer;
+  padding: 4px 0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
-.tag:hover {
-  text-decoration: underline;
+.tag:active {
+  opacity: 0.7;
 }
 
 .audio-info {
@@ -182,11 +210,12 @@
 .video-actions {
   position: absolute;
   right: 12px;
-  bottom: 120px;
+  right: max(12px, env(safe-area-inset-right, 12px));
+  bottom: 140px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: 18px;
   z-index: 10;
 }
 
@@ -194,44 +223,108 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 4px;
+  /* Larger touch target */
+  min-width: 50px;
+  min-height: 50px;
+  padding: 4px;
+}
+
+.action-button:active {
+  transform: scale(0.9);
 }
 
 .action-icon {
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-  transition: transform 0.2s ease;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+  transition: transform 0.15s ease;
 }
 
-.action-button:hover .action-icon {
-  transform: scale(1.15);
+.action-button:active .action-icon {
+  transform: scale(1.2);
 }
 
 .action-icon.liked {
-  animation: pulse 0.3s ease;
+  animation: heartBounce 0.4s ease;
 }
 
 .action-icon.saved {
-  animation: pulse 0.3s ease;
+  animation: saveBounce 0.4s ease;
+}
+
+@keyframes heartBounce {
+  0% { transform: scale(1); }
+  25% { transform: scale(1.3); }
+  50% { transform: scale(0.9); }
+  75% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+@keyframes saveBounce {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
 }
 
 .action-count {
   font-size: 12px;
-  font-weight: 500;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  font-weight: 600;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
 }
 
 .mute-button {
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 10px;
-  transition: background-color 0.3s ease;
+  margin-top: 8px;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
-.mute-button:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+.mute-button:active {
+  background-color: rgba(255, 255, 255, 0.25);
+  transform: scale(0.95);
+}
+
+/* Adjust layout for smaller screens */
+@media (max-height: 700px) {
+  .video-info {
+    bottom: 70px;
+  }
+
+  .video-actions {
+    bottom: 120px;
+    gap: 14px;
+  }
+
+  .video-progress-bar {
+    bottom: 60px;
+  }
+}
+
+/* Landscape mode adjustments */
+@media (orientation: landscape) and (max-height: 500px) {
+  .video-info {
+    bottom: 60px;
+    right: 120px;
+  }
+
+  .video-actions {
+    bottom: 80px;
+    gap: 10px;
+  }
+
+  .action-button {
+    min-height: 40px;
+    gap: 2px;
+  }
+
+  .action-count {
+    font-size: 10px;
+  }
 }

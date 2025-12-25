@@ -3,23 +3,36 @@
   justify-content: space-around;
   align-items: center;
   padding: 10px 0 20px;
+  padding-bottom: max(20px, env(safe-area-inset-bottom, 20px));
   background: linear-gradient(to top, var(--bg-dark), rgba(15, 15, 26, 0.95));
   border-top: 1px solid rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  /* Prevent navigation from being covered */
+  position: relative;
+  z-index: 50;
 }
 
 .nav-item {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 4px;
-  padding: 4px 16px;
+  padding: 8px 16px;
   color: var(--text-muted);
-  transition: all 0.3s ease;
+  transition: color 0.2s ease;
+  /* Ensure minimum touch target */
+  min-height: 48px;
+  min-width: 48px;
 }
 
 .nav-item:hover {
   color: var(--text-secondary);
+}
+
+.nav-item:active {
+  transform: scale(0.95);
 }
 
 .nav-item.active {
@@ -28,6 +41,9 @@
 
 .nav-icon {
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .nav-item.active .nav-icon::after {
@@ -45,22 +61,45 @@
 
 .nav-item.create-btn .create-icon {
   background: var(--gradient-primary);
-  padding: 10px 20px;
-  border-radius: 10px;
+  padding: 12px 22px;
+  border-radius: 12px;
   color: white;
   box-shadow: var(--shadow-glow);
-  transition: all 0.3s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.nav-item.create-btn:hover .create-icon {
+.nav-item.create-btn:hover .create-icon,
+.nav-item.create-btn:active .create-icon {
   transform: scale(1.05);
+  box-shadow: 0 0 30px rgba(167, 139, 250, 0.5);
 }
 
 .nav-label {
   font-size: 10px;
   font-weight: 500;
+  margin-top: 2px;
 }
 
 .nav-item.create-btn .nav-label {
   color: var(--text-primary);
+}
+
+/* Mobile landscape adjustments */
+@media (orientation: landscape) and (max-height: 500px) {
+  .navigation {
+    padding: 6px 0 10px;
+    padding-bottom: max(10px, env(safe-area-inset-bottom, 10px));
+  }
+
+  .nav-item {
+    min-height: 40px;
+    padding: 4px 12px;
+  }
+
+  .nav-label {
+    font-size: 9px;
+  }
 }
