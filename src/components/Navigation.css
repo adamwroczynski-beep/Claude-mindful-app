@@ -1,0 +1,66 @@
+.navigation {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px 0 20px;
+  background: linear-gradient(to top, var(--bg-dark), rgba(15, 15, 26, 0.95));
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 16px;
+  color: var(--text-muted);
+  transition: all 0.3s ease;
+}
+
+.nav-item:hover {
+  color: var(--text-secondary);
+}
+
+.nav-item.active {
+  color: var(--text-primary);
+}
+
+.nav-icon {
+  position: relative;
+}
+
+.nav-item.active .nav-icon::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--gradient-primary);
+  box-shadow: var(--shadow-glow);
+}
+
+.nav-item.create-btn .create-icon {
+  background: var(--gradient-primary);
+  padding: 10px 20px;
+  border-radius: 10px;
+  color: white;
+  box-shadow: var(--shadow-glow);
+  transition: all 0.3s ease;
+}
+
+.nav-item.create-btn:hover .create-icon {
+  transform: scale(1.05);
+}
+
+.nav-label {
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.nav-item.create-btn .nav-label {
+  color: var(--text-primary);
+}

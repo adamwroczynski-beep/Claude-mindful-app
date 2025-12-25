@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="lotusGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#6366f1;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <path fill="url(#lotusGrad)" d="M50 15c-5 10-15 20-25 25 5 2 10 5 15 10-10 5-20 15-25 25 10-5 22-8 35-8s25 3 35 8c-5-10-15-20-25-25 5-5 10-8 15-10-10-5-20-15-25-25z"/>
+  <ellipse cx="50" cy="75" rx="20" ry="8" fill="url(#lotusGrad)" opacity="0.5"/>
+</svg>
